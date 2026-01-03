@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乐队子世代 - Ave Mujica Style</title>
+    <style>
+        /* 引入更具张力的字体 */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Noto+Serif+SC:wght@200;900&family=Playfair+Display:ital,wght@1,700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000205;
+            overflow: hidden;
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+        }
+
+        .vignette {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, 
+                transparent 10%, 
+                rgba(10, 0, 20, 0.5) 40%, 
+                rgba(0,0,0,0.95) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .content-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* 主标题：增加颜色停留时长，优化渐变过渡 */
+        .main-title {
+            font-size: 6.5rem;
+            font-weight: 900;
+            letter-spacing: 1.5rem;
+            margin: 0;
+            position: relative;
+            /* 增加多个色标，让核心色（深红与魅紫）在中间停留更久 */
+            background: linear-gradient(to bottom, 
+                #ff1e56 0%,    /* 顶部亮红 */
+                #8e2de2 20%,   /* 核心紫 */
+                #4a00e0 50%,   /* 深邃蓝紫 */
+                #8e2de2 80%,   /* 核心紫回切 */
+                #ff1e56 100%); /* 底部亮红 */
+            background-size: 100% 300%; /* 扩大尺寸，让流动更平滑 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* 实现金属浮雕感与内发光 */
+            filter: drop-shadow(0 0 12px rgba(142, 45, 226, 0.5)) 
+                    drop-shadow(0 5px 2px rgba(0,0,0,0.8));
+            
+            /* 动画时长延长到 15s，使其更有“滞留感” */
+            animation: flowPurple 15s ease-in-out infinite, titleFloat 6s ease-in-out infinite;
+        }
+
+        /* 副标题：优化的流金质感 */
+        .sub-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 2.5rem;
+            margin-top: 1.2rem;
+            padding-left: 2.5rem;
+            background: linear-gradient(
+                90deg, 
+                #734b16 0%, 
+                #d4af37 20%, 
+                #fef9e7 50%, 
+                #d4af37 80%, 
+                #734b16 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+            font-family: 'Playfair Display', 'Noto Serif SC', serif;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+            animation: goldSweep 7s linear infinite;
+        }
+
+        /* 装饰：强化分割线的哥特感 */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2.5rem auto;
+            width: 55%;
+        }
+
+        .line {
+            height: 1px;
+            flex-grow: 1;
+            /* 由红紫色过渡到金色的细线 */
+            background: linear-gradient(to right, transparent,  #ff2e63, #d4af37, transparent);
+            opacity: 0.8;
+        }
+
+        .diamond {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #d4af37;
+            background: #1a001a;
+            transform: rotate(45deg);
+            margin: 0 20px;
+            box-shadow: 0 0 15px #ff1e56;
+            position: relative;
+        }
+
+        .diamond::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            background: #d4af37;
+        }
+
+        .motto {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 0.85rem;
+            color: #6a4c93;
+            letter-spacing: 0.8rem;
+            margin-top: 2.5rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        /* --- 动画：增加平滑度 --- */
+
+        @keyframes flowPurple {
+            0% { background-position: 50% 0%; }
+            50% { background-position: 50% 100%; } /* 颜色在这里会缓慢滑过 */
+            100% { background-position: 50% 0%; }
+        }
+
+        @keyframes goldSweep {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); filter: brightness(1); }
+            50% { transform: translateY(-8px); filter: brightness(1.2); }
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 3rem; letter-spacing: 0.6rem; }
+            .sub-title { font-size: 1.2rem; letter-spacing: 1.2rem; }
+            .divider { width: 85%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="vignette"></div>
+
+<div class="content-overlay">
+    <!-- 主标题改为“世代”，动画更慢 -->
+    <div class="main-title">乐队子世代</div>
+    
+    <div class="divider">
+        <div class="line"></div>
+        <div class="diamond"></div>
+        <div class="line"></div>
+    </div>
+    
+    <div class="sub-title">那美好的未来</div>
+    
+    <!-- 增加 Ave Mujica 风格的拉丁语/德语点缀 -->
+    <div class="motto">EX-lilith · GO Rai</div>
+</div>
+
+<canvas id="starCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let stars = [];
+    const layers = [
+        { count: 180, size: 0.7, speed: 0.08, color: '#332244' }, // 深紫背景星
+        { count: 120, size: 1.1, speed: 0.2, color: '#ffffff' }, 
+        { count: 35,  size: 2.2, speed: 0.6, color: '#ff1e56' }  // 绯红星芒
+    ];
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+
+    class Star {
+        constructor(size, speed, color, isBright = false) {
+            this.size = size;
+            this.speed = speed;
+            this.baseColor = color;
+            this.isBright = isBright;
+            this.init();
+        }
+
+        init() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.blinkSpeed = 0.008 + Math.random() * 0.02;
+            this.angle = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.x -= this.speed;
+            this.angle += this.blinkSpeed;
+            if (this.x < -30) this.x = width + 30;
+        }
+
+        draw() {
+            const alpha = (Math.sin(this.angle) + 1) / 2;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.fillStyle = this.baseColor;
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (this.isBright) {
+                // 更细长的星芒
+                ctx.strokeStyle = this.baseColor;
+                ctx.lineWidth = 0.4;
+                ctx.beginPath();
+                ctx.moveTo(this.x - this.size * 5, this.y);
+                ctx.lineTo(this.x + this.size * 5, this.y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - this.size * 5);
+                ctx.lineTo(this.x, this.y + this.size * 5);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+
+    function createStars() {
+        stars = [];
+        layers.forEach((layer, index) => {
+            for (let i = 0; i < layer.count; i++) {
+                stars.push(new Star(layer.size, layer.speed, layer.color, index === 2));
+            }
+        });
+    }
+
+    function animate() {
+        ctx.fillStyle = '#000205';
+        ctx.fillRect(0, 0, width, height);
+
+        // 中心紫色微光
+        const grad = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, width*0.7);
+        grad.addColorStop(0, 'rgba(40, 10, 60, 0.25)');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        stars.forEach(star => {
+            star.update();
+            star.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => { resize(); createStars(); });
+    resize();
+    createStars();
+    animate();
+</script>
+</body>
+</html>
